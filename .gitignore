@@ -42,3 +42,6 @@ next-env.d.ts
 vercel_out.txt
 .vercel
 opencode.json
+drive_scrape/
+drive_docs/
+test.pdf

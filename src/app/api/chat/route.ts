@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import https from "https";
 import { transcripts } from "@/data/transcripts";
+import { driveDocs } from "@/data/driveDocs";
 import { videos } from "@/data/videos";
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
@@ -55,11 +56,16 @@ export async function POST(req: NextRequest) {
       .join("\n\n")
       .slice(0, 60000);
 
+    const driveDocContext = driveDocs
+      .map(d => `### [${d.folder}] ${d.name}\n${d.content}`)
+      .join("\n\n")
+      .slice(0, 60000);
+
     const outline = videos
       .map(v => `- [v${v.version}] ${v.section}: ${v.title}`)
       .join("\n");
 
-    const combined = [transcriptContext, clientTranscripts].filter(Boolean).join("\n\n").slice(0, 100000);
+    const combined = [transcriptContext, driveDocContext, clientTranscripts].filter(Boolean).join("\n\n").slice(0, 100000);
 
     const filesContext = files
       .map((f: any) => `### Uploaded file: ${f.name}\n${(f.content || "").slice(0, 20000)}`)
@@ -85,7 +91,7 @@ When a user uploads a file, silently incorporate it into your understanding. Do 
 COURSE OUTLINE (all lessons):
 ${outline}
 
-${combined ? `VIDEO TRANSCRIPTS:\n${combined}` : "No transcripts loaded yet."}
+${combined ? `COURSE TRANSCRIPTS & DOCUMENTS:\n${combined}` : "No transcripts loaded yet."}
 
 ${filesContext ? `UPLOADED FILES (memory):\n${filesContext}` : ""}
 

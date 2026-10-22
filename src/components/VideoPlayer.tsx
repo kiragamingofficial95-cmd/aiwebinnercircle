@@ -23,6 +23,11 @@ function getLoomId(url: string) {
   return m ? m[1] : null;
 }
 
+function getDriveId(url: string) {
+  const m = url.match(/file\/d\/([\w-]+)/);
+  return m ? m[1] : null;
+}
+
 export function VideoPlayer({ video, onEnded }: VideoPlayerProps) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => { setLoaded(false); const t = setTimeout(() => setLoaded(true), 300); return () => clearTimeout(t); }, [video.id]);
@@ -30,11 +35,13 @@ export function VideoPlayer({ video, onEnded }: VideoPlayerProps) {
   const ytId = getYoutubeId(video.url);
   const wistiaId = getWistiaId(video.url);
   const loomId = getLoomId(video.url);
+  const driveId = getDriveId(video.url);
 
   let src = "";
   if (ytId) src = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
   else if (wistiaId) src = `https://fast.wistia.net/embed/iframe/${wistiaId}`;
   else if (loomId) src = `https://www.loom.com/embed/${loomId}`;
+  else if (driveId) src = `https://drive.google.com/file/d/${driveId}/preview`;
 
   return (
     <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-indigo-500/10">
