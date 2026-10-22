@@ -142,7 +142,19 @@ export const videos: Video[] = [
 
 export function getSections() {
   const sections = Array.from(new Set(videos.map(v => v.section)));
-  return sections.map(section => ({
+  const deanNum = (name: string) => {
+    const m = name.match(/^Dean:\s*(\d+)/);
+    return m ? parseInt(m[1], 10) : null;
+  };
+  const sorted = [...sections].sort((a, b) => {
+    const an = deanNum(a);
+    const bn = deanNum(b);
+    if (an !== null && bn !== null) return an - bn;
+    if (an !== null) return 1; // Dean sections after non-Dean? keep original order for non-dean
+    if (bn !== null) return -1;
+    return 0; // preserve insertion order for non-Dean
+  });
+  return sorted.map(section => ({
     name: section,
     videos: videos.filter(v => v.section === section).sort((a,b) => a.order - b.order)
   }));
