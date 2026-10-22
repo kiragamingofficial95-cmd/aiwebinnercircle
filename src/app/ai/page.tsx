@@ -20,15 +20,17 @@ export default function AIPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const list = loadConversations();
-    setConversations(list);
-    if (list.length) setCurrentId(list[0].id);
-    else {
-      const c = newConversation();
-      saveConversations([c]);
-      setConversations([c]);
-      setCurrentId(c.id);
-    }
+    (async () => {
+      const list = await loadConversations();
+      setConversations(list);
+      if (list.length) setCurrentId(list[0].id);
+      else {
+        const c = newConversation();
+        await saveConversations([c]);
+        setConversations([c]);
+        setCurrentId(c.id);
+      }
+    })();
     const p = localStorage.getItem("ic_provider");
     if (p) setProvider(p);
   }, []);
@@ -93,12 +95,13 @@ export default function AIPage() {
     setFiles([]);
     setLoading(true);
     try {
+      const transcriptText = await getAllTranscriptText();
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updatedMsgs.map(m => ({ role: m.role, content: m.content })),
-          transcripts: getAllTranscriptText(),
+          transcripts: transcriptText,
           provider,
           files: [...mergedFiles, ...sendFiles],
         }),

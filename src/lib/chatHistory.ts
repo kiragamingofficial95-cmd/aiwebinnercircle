@@ -22,7 +22,7 @@ export interface Conversation {
 
 const KEY = "ic_conversations";
 
-export function loadConversations(): Conversation[] {
+export function loadConversationsCache(): Conversation[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(KEY);
@@ -33,9 +33,39 @@ export function loadConversations(): Conversation[] {
   }
 }
 
-export function saveConversations(list: Conversation[]) {
+export function saveConversationsCache(list: Conversation[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(KEY, JSON.stringify(list));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(list));
+  } catch {}
+}
+
+export async function loadConversations(): Promise<Conversation[]> {
+  if (typeof window === "undefined") return [];
+  try {
+    const res = await fetch("/api/conversations");
+    if (!res.ok) throw new Error("fetch failed");
+    const data = await res.json();
+    const list = (data.conversations || []).map((c: any) => ({ ...c, files: c.files || [] }));
+    saveConversationsCache(list);
+    return list;
+  } catch {
+    return loadConversationsCache();
+  }
+}
+
+export async function saveConversations(list: Conversation[]): Promise<void> {
+  if (typeof window === "undefined") return;
+  saveConversationsCache(list);
+  try {
+    await fetch("/api/conversations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversations: list }),
+    });
+  } catch {
+    // cache kept; retry later
+  }
 }
 
 export function newConversation(): Conversation {

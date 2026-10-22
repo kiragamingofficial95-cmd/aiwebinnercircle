@@ -15,12 +15,14 @@ export function TranscriptModal({ videoId, videoTitle, onClose }: Props) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const all = loadTranscripts();
-    setText(all[videoId] || "");
+    (async () => {
+      const all = await loadTranscripts();
+      setText(all[videoId] || "");
+    })();
   }, [videoId]);
 
-  const handleSave = () => {
-    saveTranscript(videoId, text);
+  const handleSave = async () => {
+    await saveTranscript(videoId, text);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
   };

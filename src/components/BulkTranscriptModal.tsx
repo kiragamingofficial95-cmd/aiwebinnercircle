@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Upload } from "lucide-react";
+import { saveTranscript } from "@/lib/transcripts";
 
 interface Props {
   onClose: () => void;
@@ -11,14 +12,15 @@ export function BulkTranscriptModal({ onClose }: Props) {
   const [text, setText] = useState("");
   const [msg, setMsg] = useState("");
 
-  const handleImport = () => {
+  const handleImport = async () => {
     try {
       const parsed = JSON.parse(text);
       if (typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Expected object map videoId->transcript");
-      const existing = JSON.parse(localStorage.getItem("ic_transcripts") || "{}");
-      const merged = { ...existing, ...parsed };
-      localStorage.setItem("ic_transcripts", JSON.stringify(merged));
-      setMsg(`Imported ${Object.keys(parsed).length} transcripts.`);
+      const keys = Object.keys(parsed);
+      for (const k of keys) {
+        await saveTranscript(k, String(parsed[k] ?? ""));
+      }
+      setMsg(`Imported ${keys.length} transcripts.`);
     } catch (e: any) {
       setMsg("Error: " + (e?.message || "invalid JSON"));
     }
