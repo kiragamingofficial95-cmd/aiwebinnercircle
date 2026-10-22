@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Send, Plus, Trash2, Bot, Loader2, MessageSquare, Sparkles, Settings } from "lucide-react";
-import { Conversation, ChatMessage, loadConversations, saveConversations, newConversation } from "@/lib/chatHistory";
+import { Send, Plus, Trash2, Bot, Loader2, MessageSquare, Sparkles, Settings, Paperclip, ChevronDown, ChevronUp } from "lucide-react";
+import { Conversation, ChatMessage, ChatFile, loadConversations, saveConversations, newConversation } from "@/lib/chatHistory";
 import { getAllTranscriptText } from "@/lib/transcripts";
 
 export default function AIPage() {
@@ -11,7 +11,10 @@ export default function AIPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [provider, setProvider] = useState("ollama");
+  const [files, setFiles] = useState<ChatFile[]>([]);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const list = loadConversations();
@@ -43,6 +46,7 @@ export default function AIPage() {
     const list = [c, ...conversations];
     persist(list);
     setCurrentId(c.id);
+    setFiles([]);
   };
 
   const deleteConv = (id: string) => {
@@ -56,41 +60,55 @@ export default function AIPage() {
     }
   };
 
+  const uploadFile = async (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/extract", { method: "POST", body: form });
+    const data = await res.json();
+    if (data.content) setFiles(f => [...f, { name: data.name, content: data.content }]);
+  };
+
   const send = async () => {
     const text = input.trim();
-    if (!text || loading || !current) return;
-    const updatedMsgs: ChatMessage[] = [...current.messages, { role: "user", content: text }];
+    if ((!text && files.length === 0) || loading || !current) return;
+    const userMsg: ChatMessage = { role: "user", content: text || "(file uploaded)", files: files.length ? [...files] : undefined };
+    const updatedMsgs: ChatMessage[] = [...current.messages, userMsg];
+    // merge uploaded files into conversation memory
+    const mergedFiles = [...current.files];
+    for (const f of files) if (!mergedFiles.find(x => x.name === f.name)) mergedFiles.push(f);
     const updatedConv: Conversation = {
       ...current,
       messages: updatedMsgs,
-      title: current.messages.length === 0 ? text.slice(0, 40) : current.title,
+      files: mergedFiles,
+      title: current.messages.length === 0 ? (text || "File chat").slice(0, 40) : current.title,
       updatedAt: Date.now(),
     };
     const list = conversations.map(c => (c.id === current.id ? updatedConv : c));
     persist(list);
     setInput("");
+    const sendFiles = [...files];
+    setFiles([]);
     setLoading(true);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMsgs,
+          messages: updatedMsgs.map(m => ({ role: m.role, content: m.content })),
           transcripts: getAllTranscriptText(),
           provider,
+          files: [...mergedFiles, ...sendFiles],
         }),
       });
       const data = await res.json();
       const reply = data.reply || data.error || "Something went wrong.";
       const finalConv: Conversation = {
         ...updatedConv,
-        messages: [...updatedMsgs, { role: "assistant", content: reply }],
+        messages: [...updatedMsgs, { role: "assistant", content: reply, thinking: data.thinking, modelThinking: data.modelThinking }],
         updatedAt: Date.now(),
       };
-      const finalList = conversations.map(c => (c.id === current.id ? finalConv : c));
-      // ensure order: updated first
-      const reordered = [finalConv, ...finalList.filter(c => c.id !== current.id)];
-      persist(reordered);
+      const finalList = [finalConv, ...conversations.filter(c => c.id !== current.id)];
+      persist(finalList);
     } catch {
       const finalConv: Conversation = {
         ...updatedConv,
@@ -108,9 +126,10 @@ export default function AIPage() {
     localStorage.setItem("ic_provider", p);
   };
 
+  const toggleExpand = (key: string) => setExpanded(e => ({ ...e, [key]: !e[key] }));
+
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <aside className="w-72 shrink-0 h-screen flex flex-col border-r border-white/10 bg-zinc-950/80 backdrop-blur-xl">
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -132,7 +151,7 @@ export default function AIPage() {
             className="w-full px-3 py-2 text-sm bg-zinc-900 border border-white/10 rounded-lg text-white focus:outline-none focus:border-indigo-500/50"
           >
             <option value="ollama">Ollama (gemma4:31b)</option>
-            <option value="groq">Groq (Llama 3.3)</option>
+            <option value="groq">Groq (gpt-oss-120b)</option>
           </select>
         </div>
 
@@ -147,6 +166,7 @@ export default function AIPage() {
             >
               <MessageSquare className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate flex-1 text-xs">{c.title}</span>
+              {c.files.length > 0 && <span className="text-[10px] text-zinc-500">📎{c.files.length}</span>}
               <button
                 onClick={e => { e.stopPropagation(); deleteConv(c.id); }}
                 className="opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-red-400"
@@ -158,12 +178,11 @@ export default function AIPage() {
         </nav>
       </aside>
 
-      {/* Chat area */}
       <main className="flex-1 flex flex-col min-w-0">
         <header className="px-6 py-4 border-b border-white/10 bg-zinc-950/70 backdrop-blur-xl flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">{current?.title || "Chat"}</h2>
-            <p className="text-xs text-zinc-500">Provider: {provider}</p>
+            <p className="text-xs text-zinc-500">Provider: {provider} · {current?.files.length || 0} file(s) in memory</p>
           </div>
         </header>
 
@@ -171,16 +190,34 @@ export default function AIPage() {
           {current?.messages.length === 0 && (
             <div className="text-center text-zinc-500 text-sm mt-20">
               <Bot className="w-10 h-10 mx-auto mb-3 text-cyan-300" />
-              Start a conversation. I have access to all course transcripts.
+              Start a conversation. I have access to all course transcripts, uploaded files, and the web.
             </div>
           )}
           {current?.messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
-                m.role === "user" ? "bg-indigo-500 text-white" : "bg-zinc-800 text-zinc-100 border border-white/5"
-              }`}>
+              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${m.role === "user" ? "bg-indigo-500 text-white" : "bg-zinc-800 text-zinc-100 border border-white/5"}`}>
                 {m.role === "assistant" && <Bot className="inline w-3.5 h-3.5 mr-1 text-cyan-300" />}
-                {m.content}
+                <div className="whitespace-pre-wrap">{m.content}</div>
+                {m.files && m.files.length > 0 && (
+                  <div className="mt-1 text-xs text-indigo-200">📎 {m.files.map(f => f.name).join(", ")}</div>
+                )}
+                {m.role === "assistant" && (m.thinking?.length || m.modelThinking) && (
+                  <div className="mt-2 border-t border-white/10 pt-2">
+                    <button
+                      onClick={() => toggleExpand(`${current.id}-${i}`)}
+                      className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200"
+                    >
+                      {expanded[`${current.id}-${i}`] ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      Thinking
+                    </button>
+                    {expanded[`${current.id}-${i}`] && (
+                      <div className="mt-1 text-xs text-zinc-400 whitespace-pre-wrap bg-zinc-900/60 rounded p-2">
+                        {m.thinking && m.thinking.map((t, j) => <div key={j}>• {t}</div>)}
+                        {m.modelThinking && <div className="mt-1 text-zinc-300">{m.modelThinking}</div>}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -193,15 +230,40 @@ export default function AIPage() {
           )}
         </div>
 
+        {files.length > 0 && (
+          <div className="px-4 py-2 border-t border-white/10 flex flex-wrap gap-1.5 max-w-3xl mx-auto w-full">
+            {files.map((f, i) => (
+              <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded-md flex items-center gap-1">
+                📎 {f.name}
+                <button onClick={() => setFiles(fs => fs.filter((_, j) => j !== i))} className="text-zinc-500 hover:text-red-400">×</button>
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="p-4 border-t border-white/10 bg-zinc-950/70">
           <form onSubmit={e => { e.preventDefault(); send(); }} className="max-w-3xl mx-auto flex gap-2">
             <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              multiple
+              onChange={e => {
+                const fs = e.target.files;
+                if (fs) Array.from(fs).forEach(uploadFile);
+                e.target.value = "";
+              }}
+            />
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="px-3 py-3 rounded-xl bg-zinc-800 text-zinc-300 hover:bg-zinc-700">
+              <Paperclip className="w-5 h-5" />
+            </button>
+            <input
               value={input}
               onChange={e => setInput(e.target.value)}
-              placeholder="Ask anything about the course..."
+              placeholder="Ask anything or attach a file..."
               className="flex-1 px-4 py-3 text-sm bg-zinc-900 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50"
             />
-            <button type="submit" disabled={loading || !input.trim()} className="px-4 py-3 rounded-xl bg-indigo-500 text-white disabled:opacity-50 hover:bg-indigo-400 transition-colors">
+            <button type="submit" disabled={loading || (!input.trim() && files.length === 0)} className="px-4 py-3 rounded-xl bg-indigo-500 text-white disabled:opacity-50 hover:bg-indigo-400 transition-colors">
               <Send className="w-5 h-5" />
             </button>
           </form>
