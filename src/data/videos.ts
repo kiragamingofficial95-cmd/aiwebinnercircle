@@ -1,0 +1,105 @@
+export interface Video {
+  id: string;
+  section: string;
+  subsection?: string;
+  version: string;
+  type: string;
+  title: string;
+  url: string;
+  order: number;
+}
+
+export const videos: Video[] = [
+  { id: "1", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Matt's $30,000-a-month testimonial", url: "https://www.youtube.com/watch?v=PWwlr0oynFE&t=1s", order: 1 },
+  { id: "2", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Flynn's $15,000-a-month testimonial", url: "https://www.youtube.com/watch?v=TB9G37PlkIQ&t=102s", order: 2 },
+  { id: "3", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Spencer's $10,000-a-month testimonial", url: "https://www.youtube.com/watch?v=tQE66NugwCc&t=640s", order: 3 },
+  { id: "4", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "TJ's $10,000-a-month testimonial", url: "https://www.youtube.com/watch?v=L6AwsaDZkUk", order: 4 },
+  { id: "5", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Von's $10,000-a-month testimonial", url: "https://www.youtube.com/watch?v=oPIH3PCJLfI&t=6s", order: 5 },
+  { id: "6", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Trivan's $8,000-a-month testimonial", url: "https://www.youtube.com/watch?v=6X2lR4tTXy0&t=1s", order: 6 },
+  { id: "7", version: "1.0", section: "Inner Circle Student Wins", type: "LESSON", title: "Abdul's $5,000-a-month testimonial", url: "https://www.youtube.com/watch?v=Jqlh-6cOkq0&t=7s", order: 7 },
+  { id: "8", version: "1.0", section: "Introduction", type: "LESSON", title: "Introduction", url: "https://www.loom.com/share/4a94184130d84386bab60920c4964a5a", order: 8 },
+  { id: "9", version: "1.0", section: "Introduction", type: "LESSON", title: "When I first started my agency", url: "https://fast.wistia.net/embed/iframe/5hbb74sm12", order: 9 },
+  { id: "10", version: "1.0", section: "Introduction", type: "LESSON", title: "Mindset", url: "https://fast.wistia.net/embed/iframe/hwajmns1v1", order: 10 },
+  { id: "11", version: "1.0", section: "Setup", type: "LESSON", title: "Picking your niche", url: "https://fast.wistia.net/embed/iframe/wt8w9m3opr", order: 11 },
+  { id: "12", version: "1.0", section: "Setup", type: "LESSON", title: "Building your offer", url: "https://fast.wistia.net/embed/iframe/z0x8yq0i2k", order: 12 },
+  { id: "13", version: "1.0", section: "Getting Clients", type: "LESSON", title: "It's a numbers game", url: "https://fast.wistia.net/embed/iframe/o88bfe7vc0", order: 13 },
+  { id: "14", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Cold calling script if you're 19 years old and under", url: "https://fast.wistia.net/embed/iframe/99jl7i3wtl", order: 14 },
+  { id: "15", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Cold calling masterclass", url: "https://fast.wistia.net/embed/iframe/3th32jpdze", order: 15 },
+  { id: "16", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Live cold calls", url: "https://fast.wistia.net/embed/iframe/tqi5t5o48s", order: 16 },
+  { id: "17", version: "1.0", section: "Getting Clients", type: "LESSON", title: "How to objection handle", url: "https://fast.wistia.net/embed/iframe/ch94bt2qer", order: 17 },
+  { id: "18", version: "1.0", section: "Getting Clients", type: "LESSON", title: "How to handle owner absence", url: "https://fast.wistia.net/embed/iframe/qdobdlrwjw", order: 18 },
+  { id: "19", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Cold call review", url: "https://fast.wistia.net/embed/iframe/le5p4h5vrz", order: 19 },
+  { id: "20", version: "1.0", section: "Getting Clients", type: "LESSON", title: "How to get clients on Instagram", url: "https://fast.wistia.net/embed/iframe/3wwmejyl6a", order: 20 },
+  { id: "21", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Increase your chances with this video", url: "https://fast.wistia.net/embed/iframe/7mp8f9bexq", order: 21 },
+  { id: "22", version: "1.0", section: "Getting Clients", type: "LESSON", title: "Word of mouth", url: "https://fast.wistia.net/embed/iframe/yhsus64quv", order: 22 },
+  { id: "23", version: "1.0", section: "Closing Clients", type: "LESSON", title: "How to close", url: "https://www.youtube.com/watch?v=M1v0fSsuMy4", order: 23 },
+  { id: "24", version: "1.0", section: "Closing Clients", type: "LESSON", title: "Midpoint check-in", url: "https://www.loom.com/share/43f6e28bfa2e4bdea349bca6b4095bad", order: 24 },
+  { id: "25", version: "1.0", section: "Service Delivery", type: "LESSON", title: "What makes a website high-converting", url: "https://fast.wistia.net/embed/iframe/mqn867in77", order: 25 },
+  { id: "26", version: "1.0", section: "Service Delivery", type: "LESSON", title: "Base44: How to make the AI mockup", url: "https://fast.wistia.net/embed/iframe/y9lexrdgo3", order: 26 },
+  { id: "27", version: "1.0", section: "Service Delivery", type: "LESSON", title: "Send the mockup to your web designer", url: "https://fast.wistia.net/embed/iframe/ipddq36t68", order: 27 },
+  { id: "28", version: "1.0", section: "Service Delivery", type: "LESSON", title: "How to connect the contact form on Base44", url: "https://fast.wistia.net/embed/iframe/ufbysef40j", order: 28 },
+  { id: "29", version: "1.0", section: "Service Delivery", type: "LESSON", title: "How to connect a custom domain", url: "https://fast.wistia.net/embed/iframe/cbrhe0uobz", order: 29 },
+  { id: "30", version: "1.0", section: "Service Delivery", type: "LESSON", title: "How to transfer the website to the biz owner", url: "https://fast.wistia.net/embed/iframe/497ax1gruf", order: 30 },
+  { id: "31", version: "1.0", section: "Service Delivery", type: "LESSON", title: "You should learn how to make websites", url: "https://fast.wistia.net/embed/iframe/ie5u57jt2f", order: 31 },
+  { id: "32", version: "1.0", section: "Service Delivery", type: "LESSON", title: "How to ensure clients are satisfied", url: "https://fast.wistia.net/embed/iframe/8nuztzo0qb", order: 32 },
+  { id: "33", version: "1.0", section: "Service Delivery", type: "LESSON", title: "Client onboarding", url: "https://fast.wistia.net/embed/iframe/9iei9x4xr4", order: 33 },
+  { id: "34", version: "1.0", section: "Service Delivery", type: "LESSON", title: "The whole A to Z process", url: "https://www.youtube.com/watch?v=-np6T0ljYwo", order: 34 },
+  { id: "35", version: "1.0", section: "Tips and Tricks", type: "LESSON", title: "Don't make these mistakes", url: "https://fast.wistia.net/embed/iframe/jeota6ltmk", order: 35 },
+  { id: "36", version: "1.0", section: "Tips and Tricks", type: "LESSON", title: "Do not be scared to go off script", url: "https://fast.wistia.net/embed/iframe/ojzn1hwq4u", order: 36 },
+  { id: "37", version: "1.0", section: "Upselling", type: "LESSON", title: "How to pitch Google Ads", url: "https://fast.wistia.net/embed/iframe/d4se9n9s5g", order: 37 },
+  { id: "38", version: "1.0", section: "Frequently Asked Questions", type: "LESSON", title: "High-converting wireframe structure", url: "https://fast.wistia.net/embed/iframe/7g4r6b6866", order: 38 },
+  { id: "39", version: "1.0", section: "Frequently Asked Questions", type: "LESSON", title: "Why would someone give you money as a stranger?", url: "https://fast.wistia.net/embed/iframe/hlic0di886", order: 39 },
+  { id: "40", version: "1.0", section: "Frequently Asked Questions", type: "LESSON", title: "Booking setup with Google Meet", url: "https://fast.wistia.net/embed/iframe/qwyc4eiebr", order: 40 },
+  { id: "41", version: "1.0", section: "Frequently Asked Questions", type: "LESSON", title: "Outro", url: "https://www.loom.com/share/4d7ac4fd71704932b921543cad706d12", order: 41 },
+  { id: "42", version: "1.0", section: "Leaked Inner Circle Group Call", type: "LESSON", title: "Leaked Inner Circle Group Call", url: "https://www.loom.com/share/1436e154ec8a4a87a79c56d25ca79f57", order: 42 },
+  { id: "43", version: "2.0", section: "Tips and Tricks", type: "LESSON", title: "Finding More Leads on New Platforms", url: "https://www.loom.com/share/624764d04a2d49fc8ec156a4f7ccc683", order: 43 },
+  { id: "44", version: "2.0", section: "Common Questions", type: "LESSON", title: "How to Generate an Invoice if You Don't Have Stripe", url: "https://fast.wistia.net/embed/iframe/1l1n5mwtf3", order: 44 },
+  { id: "45", version: "2.0", section: "Introduction", type: "LESSON", title: "Welcome", url: "https://fast.wistia.net/embed/iframe/4f2rigg3pm", order: 45 },
+  { id: "46", version: "2.0", section: "Introduction", type: "LESSON", title: "Mindset", url: "https://www.loom.com/share/9d6c737990ad482c977f4048657857f9", order: 46 },
+  { id: "47", version: "2.0", section: "Setting Up Your Business", type: "LESSON", title: "Picking your name and making your logo", url: "https://www.loom.com/share/255dd8c965fb4715939a4879844fdf86", order: 47 },
+  { id: "48", version: "2.0", section: "Setting Up Your Business", type: "LESSON", title: "Picking your niche", url: "https://www.loom.com/share/e03c2ea948d34319981a8ac986fc099c", order: 48 },
+  { id: "49", version: "2.0", section: "Setting Up Your Business", type: "LESSON", title: "Making your agency website", url: "https://www.loom.com/share/03a9dafc0c8445bfb83596a622255458", order: 49 },
+  { id: "50", version: "2.0", section: "Setting Up Your Business", type: "LESSON", title: "Your high-converting website strategy", url: "https://www.loom.com/share/a0962bb37a364e5c8b094f70471a8f32", order: 50 },
+  { id: "51", version: "2.0", section: "Setting Up Your Business", type: "LESSON", title: "Setting up your hosting and giving access to your web designer", url: "https://www.loom.com/share/d749604a82334804a246eb7a56a76715", order: 51 },
+  { id: "52", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "It's a numbers game", url: "https://www.loom.com/share/e49c7ed143104411877a1bee915f009c", order: 52 },
+  { id: "53", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Where to find leads to call", url: "https://www.loom.com/share/bcaf0bc9e35949919e0610742e105dac", order: 53 },
+  { id: "54", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Finding more leads on new platforms without using Google", url: "https://www.loom.com/share/624764d04a2d49fc8ec156a4f7ccc683", order: 54 },
+  { id: "55", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Cold calling script", url: "https://www.loom.com/share/b3734739c2a24796b1270d52f699a3bf", order: 55 },
+  { id: "56", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Community portfolio", url: "https://www.loom.com/share/6cc428a56a7c423cb99a02a9a58dd793", order: 56 },
+  { id: "57", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "How to book the client in", url: "https://www.loom.com/share/c6dde690454c4e9981ded846698a1936", order: 57 },
+  { id: "58", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Abou and Johnny live cold calling", url: "https://fast.wistia.net/embed/iframe/sg24l8pptq", order: 58 },
+  { id: "59", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Cold call review from one of the students", url: "https://fast.wistia.net/embed/iframe/267akcrjp9", order: 59 },
+  { id: "60", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Mike making $1,000 in 2 hours", url: "https://fast.wistia.net/embed/iframe/a3g9hnwkpb", order: 60 },
+  { id: "61", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "How to get clients on Instagram", url: "https://fast.wistia.net/embed/iframe/rfjbakmmee", order: 61 },
+  { id: "62", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "How to effectively copy and paste voice notes for Instagram outreach", url: "https://fast.wistia.net/embed/iframe/l1o938jggb", order: 62 },
+  { id: "63", version: "2.0", section: "Client Acquisition", type: "LESSON", title: "Automating your Instagram voice notes for scalable success", url: "https://fast.wistia.net/embed/iframe/juu84fdtc8", order: 63 },
+  { id: "64", version: "2.0", section: "Closing Clients", type: "LESSON", title: "How to close", url: "https://www.youtube.com/embed/M1v0fSsuMy4", order: 64 },
+  { id: "65", version: "2.0", section: "Closing Clients", type: "LESSON", title: "Call structure with Adrian", url: "https://fast.wistia.net/embed/iframe/hhz2cpbdx5", order: 65 },
+  { id: "66", version: "2.0", section: "Closing Clients", type: "LESSON", title: "Abou inbound lead", url: "https://fast.wistia.net/embed/iframe/6xf09cxpi1", order: 66 },
+  { id: "67", version: "2.0", section: "Closing Clients", type: "LESSON", title: "Alvin's call", url: "https://fast.wistia.net/embed/iframe/cjbkgiwll6", order: 67 },
+  { id: "68", version: "2.0", section: "Closing Clients", type: "LESSON", title: "Abdul's call review", url: "https://fast.wistia.net/embed/iframe/4hrzmimcov", order: 68 },
+  { id: "69", version: "2.0", section: "Service Delivery", type: "LESSON", title: "Getting base 44", url: "https://www.loom.com/share/660edd26c8b34f479f0f6144f58d34f3", order: 69 },
+  { id: "70", version: "2.0", section: "Service Delivery", type: "LESSON", title: "How to make the AI mockup", url: "https://fast.wistia.net/embed/iframe/e86gpjwb9h", order: 70 },
+  { id: "71", version: "2.0", section: "Service Delivery", type: "LESSON", title: "Sending the mockup to Zaid", url: "https://fast.wistia.net/embed/iframe/6klg7nicy0", order: 71 },
+  { id: "72", version: "2.0", section: "Service Delivery", type: "LESSON", title: "Real client mockup build-up tutorial", url: "https://www.youtube.com/embed/2x7CAyBRPwA", order: 72 },
+  { id: "73", version: "2.0", section: "Service Delivery", type: "LESSON", title: "Real client mockup build Abou", url: "https://www.loom.com/share/41ef06641eb3413f8c48962526f22695", order: 73 },
+  { id: "74", version: "2.0", section: "Service Delivery", type: "LESSON", title: "Onboarding form", url: "https://fast.wistia.net/embed/iframe/szt5tu3jr8", order: 74 },
+  { id: "75", version: "2.0", section: "Service Delivery", type: "LESSON", title: "How to give access to the client", url: "https://fast.wistia.net/embed/iframe/56hklx3ezx", order: 75 },
+  { id: "76", version: "2.0", section: "Upselling", type: "LESSON", title: "Introduction", url: "https://fast.wistia.net/embed/iframe/krh2sbw25j", order: 76 },
+  { id: "77", version: "2.0", section: "Upselling", type: "LESSON", title: "How to upsell marketing", url: "https://fast.wistia.net/embed/iframe/rylmlm7p1j", order: 77 },
+  { id: "78", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Overview", url: "https://fast.wistia.net/embed/iframe/r9vnre5lbx", order: 78 },
+  { id: "79", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 1: Web Design", url: "https://fast.wistia.net/embed/iframe/466di1vx72", order: 79 },
+  { id: "80", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 2: Tracking", url: "https://fast.wistia.net/embed/iframe/hfdec5fs66", order: 80 },
+  { id: "81", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 3: Research", url: "https://fast.wistia.net/embed/iframe/rlea56ji9i", order: 81 },
+  { id: "82", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 4: Setup", url: "https://fast.wistia.net/embed/iframe/vs1p3l3flv", order: 82 },
+  { id: "83", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 5: Keywords", url: "https://fast.wistia.net/embed/iframe/90euvfwe4p", order: 83 },
+  { id: "84", version: "2.0", section: "Ads", type: "LESSON", title: "Google Ads Step 6: Optimization", url: "https://fast.wistia.net/embed/iframe/ymlswn8p0n", order: 84 },
+];
+
+export function getSections() {
+  const sections = Array.from(new Set(videos.map(v => v.section)));
+  return sections.map(section => ({
+    name: section,
+    videos: videos.filter(v => v.section === section).sort((a,b) => a.order - b.order)
+  }));
+}
