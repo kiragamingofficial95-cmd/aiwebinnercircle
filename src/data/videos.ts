@@ -138,6 +138,15 @@ export const videos: Video[] = [
   { id: "126", version: "Dean", section: "Dean: 2 Foundation of An Agency", type: "LESSON", title: "Video 7 Your Own Website Strategy", url: "https://drive.google.com/file/d/1ajqLTwwKv0wBOh2LDG5WHYsLZ4dF4myF/view", order: 126 },
   { id: "127", version: "Dean", section: "Dean: 1 Start Here", type: "LESSON", title: "Video 1 Overview - Web Agency Blueprint", url: "https://drive.google.com/file/d/1cjjcwn7y8J-88fIvmD7hzFSBxm7Zu4Gu/view", order: 127 },
   { id: "128", version: "Dean", section: "Dean: 1 Start Here", type: "LESSON", title: "Video 2 He Made $116k in 4 Months with Web Design", url: "https://drive.google.com/file/d/1aPwMwuDpQnC_UW7PxIPkfB62ubhGv6H7/view", order: 128 },
+
+  { id: "129", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 1", url: "https://www.loom.com/share/af96e43e101a4b318f656037922fe2c2", order: 129 },
+  { id: "130", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 2", url: "https://www.loom.com/share/8c200ab0cec44cef8ac296b82ade43b8", order: 130 },
+  { id: "131", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 3", url: "https://www.loom.com/share/3ecdc0d8b9a343c995d097abffe4a2f3", order: 131 },
+  { id: "132", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 4", url: "https://www.loom.com/share/dc5d05b351924a2290091e30942336b4", order: 132 },
+  { id: "133", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 5", url: "https://www.loom.com/share/6be6263391364344ac89ce23fbdcd0d6", order: 133 },
+  { id: "134", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 6", url: "https://www.loom.com/share/cb5e1b0afb6f4119a7ab06109f56b7a9", order: 134 },
+  { id: "135", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 7", url: "https://www.loom.com/share/3e85becd6d5e446690fc55c758ed10f3", order: 135 },
+  { id: "136", version: "Dean", section: "Dean: 8 Behind the Scenes Student Calls", type: "LESSON", title: "Behind the Scenes Student Call 8", url: "https://www.loom.com/share/e227fdc2abfa48408263419280f940f9", order: 136 },
 ];
 
 export function getSections() {
