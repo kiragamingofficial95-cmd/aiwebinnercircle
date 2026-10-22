@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Send, X, Bot, Loader2, MessageSquare, Sparkles, Paperclip, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Message {
@@ -96,7 +98,7 @@ export function Chatbot({ context }: { context?: string }) {
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[90%] px-3 py-2 rounded-xl text-sm ${m.role === "user" ? "bg-indigo-500 text-white" : "bg-zinc-800 text-zinc-100 border border-white/5"}`}>
                   {m.role === "assistant" && <Bot className="inline w-3.5 h-3.5 mr-1 text-cyan-300" />}
-                  {m.content}
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                   {m.files && m.files.length > 0 && (
                     <div className="mt-1 text-xs text-indigo-200">📎 {m.files.map(f => f.name).join(", ")}</div>
                   )}

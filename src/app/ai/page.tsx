@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Send, Plus, Trash2, Bot, Loader2, MessageSquare, Sparkles, Settings, Paperclip, ChevronDown, ChevronUp } from "lucide-react";
 import { Conversation, ChatMessage, ChatFile, loadConversations, saveConversations, newConversation } from "@/lib/chatHistory";
 import { getAllTranscriptText } from "@/lib/transcripts";
@@ -208,7 +210,7 @@ export default function AIPage() {
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${m.role === "user" ? "bg-indigo-500 text-white" : "bg-zinc-800 text-zinc-100 border border-white/5"}`}>
                 {m.role === "assistant" && <Bot className="inline w-3.5 h-3.5 mr-1 text-cyan-300" />}
-                <div className="whitespace-pre-wrap">{m.content}</div>
+                <div className="prose prose-invert prose-sm max-w-none"><ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown></div>
                 {m.files && m.files.length > 0 && (
                   <div className="mt-1 text-xs text-indigo-200">📎 {m.files.map(f => f.name).join(", ")}</div>
                 )}
