@@ -8,6 +8,7 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || "";
+const OLLAMA_API_KEY_BACKUP = process.env.OLLAMA_API_KEY_BACKUP || process.env.OLLAMA_API_KEY_2 || "c0f8dc970d504902bf58547248fbf4d8.hRbLgdF9jh4PxWJAvhBfJBST";
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "https://ollama.com/v1";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "gemma4:31b";
 
@@ -101,40 +102,53 @@ ${context ? `CURRENT VIDEO CONTEXT: ${context}` : ""}
 
 Be concise, friendly, and practical. Use bullet points when helpful. When reasoning, you may include a <think>...</think> block with your step-by-step thinking before the final answer.`;
 
-    let url = "";
-    let key = "";
-    let model = "";
+    // Build ordered list of attempts: primary provider, then Ollama backup key(s),
+    // then (if primary was Groq) Ollama as a cross-provider fallback.
+    const attempts: { url: string; key: string; model: string; label: string }[] = [];
+    const ollamaUrl = `${OLLAMA_BASE_URL.replace(/\/$/, "")}/chat/completions`;
     if (provider === "ollama") {
-      url = `${OLLAMA_BASE_URL.replace(/\/$/, "")}/chat/completions`;
-      key = OLLAMA_API_KEY;
-      model = OLLAMA_MODEL;
+      if (OLLAMA_API_KEY) attempts.push({ url: ollamaUrl, key: OLLAMA_API_KEY, model: OLLAMA_MODEL, label: "ollama" });
+      if (OLLAMA_API_KEY_BACKUP && OLLAMA_API_KEY_BACKUP !== OLLAMA_API_KEY) attempts.push({ url: ollamaUrl, key: OLLAMA_API_KEY_BACKUP, model: OLLAMA_MODEL, label: "ollama-backup" });
     } else {
-      url = "https://api.groq.com/openai/v1/chat/completions";
-      key = GROQ_API_KEY;
-      model = GROQ_MODEL;
+      if (GROQ_API_KEY) attempts.push({ url: "https://api.groq.com/openai/v1/chat/completions", key: GROQ_API_KEY, model: GROQ_MODEL, label: "groq" });
+      // fallback to Ollama (primary then backup key) if Groq is unavailable/rate-limited
+      if (OLLAMA_API_KEY) attempts.push({ url: ollamaUrl, key: OLLAMA_API_KEY, model: OLLAMA_MODEL, label: "ollama" });
+      if (OLLAMA_API_KEY_BACKUP && OLLAMA_API_KEY_BACKUP !== OLLAMA_API_KEY) attempts.push({ url: ollamaUrl, key: OLLAMA_API_KEY_BACKUP, model: OLLAMA_MODEL, label: "ollama-backup" });
     }
 
-    if (!key) {
+    if (attempts.length === 0) {
       return NextResponse.json({ reply: `${provider} API key not configured.`, thinking });
     }
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "system", content: systemPrompt }, ...messages],
-        temperature: 0.7,
-        max_tokens: 1024,
-      }),
-    });
+    let lastError = "";
+    let res: Response | null = null;
+    let usedLabel = attempts[0].label;
+    for (const a of attempts) {
+      usedLabel = a.label;
+      res = await fetch(a.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${a.key}`,
+        },
+        body: JSON.stringify({
+          model: a.model,
+          messages: [{ role: "system", content: systemPrompt }, ...messages],
+          temperature: 0.7,
+          max_tokens: 1024,
+        }),
+      });
+      if (res.ok) break;
+      const errText = await res.text();
+      lastError = `${a.label} error: ${errText}`;
+      // only fall through to next attempt on rate-limit / auth / server errors
+      if (res.status !== 429 && res.status !== 401 && res.status !== 403 && res.status < 500) {
+        return NextResponse.json({ error: lastError, thinking }, { status: res.status });
+      }
+    }
 
-    if (!res.ok) {
-      const err = await res.text();
-      return NextResponse.json({ error: `${provider} error: ${err}`, thinking }, { status: 500 });
+    if (!res || !res.ok) {
+      return NextResponse.json({ error: lastError || "All providers failed", thinking }, { status: 500 });
     }
 
     const data = await res.json();
