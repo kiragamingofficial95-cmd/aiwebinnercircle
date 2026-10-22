@@ -52,21 +52,57 @@ export async function POST(req: NextRequest) {
     const files = Array.isArray(body.files) ? body.files : [];
     const lastUser = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
 
-    const transcriptContext = transcripts
-      .map(t => `### ${t.title}\n${t.content}`)
-      .join("\n\n")
-      .slice(0, 60000);
-
-    const driveDocContext = driveDocs
-      .map(d => `### [${d.folder}] ${d.name}\n${d.content}`)
-      .join("\n\n")
-      .slice(0, 60000);
-
     const outline = videos
       .map(v => `- [v${v.version}] ${v.section}: ${v.title}`)
       .join("\n");
 
-    const combined = [transcriptContext, driveDocContext, clientTranscripts].filter(Boolean).join("\n\n").slice(0, 100000);
+    // Relevance-based selection so the 1.5M+ chars of transcripts are not
+    // blindly truncated: score each source against the user's query and keep
+    // the most relevant ones within the context budget.
+    const queryTokens = lastUser
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((w: string) => w.length > 2);
+
+    const score = (text: string) => {
+      if (!queryTokens.length) return 1;
+      const low = text.toLowerCase();
+      let s = 0;
+      for (const t of queryTokens) {
+        let idx = 0;
+        while ((idx = low.indexOf(t, idx)) !== -1) { s++; idx += t.length; }
+      }
+      return s;
+    };
+
+    const sources: { label: string; text: string }[] = [];
+    for (const t of transcripts) sources.push({ label: `### ${t.title}`, text: t.content });
+    for (const d of driveDocs) sources.push({ label: `### [${d.folder}] ${d.name}`, text: d.content });
+    if (clientTranscripts) sources.push({ label: "### Client transcripts (memory)", text: clientTranscripts });
+
+    // sort by relevance desc (stable-ish: keep original order on ties by index)
+    const ranked = sources
+      .map((s, i) => ({ ...s, i, sc: score(s.label + " " + s.text) }))
+      .sort((a, b) => b.sc - a.sc || a.i - b.i);
+
+    const BUDGET = 100000;
+    const picked: string[] = [];
+    let used = 0;
+    for (const r of ranked) {
+      const chunk = `${r.label}\n${r.text}`;
+      if (used + chunk.length > BUDGET) {
+        // try to fit a truncated remainder if there's room
+        const room = BUDGET - used;
+        if (room > 500) {
+          picked.push(chunk.slice(0, room));
+          used = BUDGET;
+        }
+        break;
+      }
+      picked.push(chunk);
+      used += chunk.length + 2;
+    }
+    const combined = picked.join("\n\n");
 
     const filesContext = files
       .map((f: any) => `### Uploaded file: ${f.name}\n${(f.content || "").slice(0, 20000)}`)
