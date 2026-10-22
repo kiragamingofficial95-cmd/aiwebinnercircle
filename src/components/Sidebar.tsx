@@ -52,18 +52,18 @@ export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, ve
             <p className="text-xs text-zinc-400">Inner Circle</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          {["1.0", "2.0"].map(v => (
+        <div className="flex flex-wrap gap-2">
+          {["1.0", "2.0", "Dean"].map(v => (
             <button
               key={v}
               onClick={() => onVersionChange(v)}
-              className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all ${
+              className={`flex-1 min-w-[60px] text-xs font-medium py-1.5 rounded-md transition-all ${
                 version === v
                   ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
                   : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
               }`}
             >
-              Version {v}
+              {v === "Dean" ? "Dean Blueprint" : "Version " + v}
             </button>
           ))}
         </div>
