@@ -74,14 +74,14 @@ export function Chatbot({ context }: { context?: string }) {
     <>
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 shadow-xl shadow-indigo-500/40 flex items-center justify-center hover:scale-105 transition-transform"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 shadow-xl shadow-indigo-500/40 flex items-center justify-center hover:scale-105 transition-transform"
         aria-label="Open chat"
       >
         {open ? <X className="w-6 h-6 text-white" /> : <MessageSquare className="w-6 h-6 text-white" />}
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-[400px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] flex flex-col rounded-2xl border border-white/10 bg-zinc-950/95 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <div className="fixed bottom-20 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-[400px] max-w-[400px] h-[70vh] sm:h-[600px] max-h-[calc(100vh-6rem)] flex flex-col rounded-2xl border border-white/10 bg-zinc-950/95 backdrop-blur-xl shadow-2xl overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-gradient-to-r from-indigo-500/20 to-cyan-400/20">
             <Sparkles className="w-5 h-5 text-cyan-300" />
             <div className="flex-1">

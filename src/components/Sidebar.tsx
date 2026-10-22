@@ -11,9 +11,11 @@ interface SidebarProps {
   completed: Set<string>;
   version: string;
   onVersionChange: (v: string) => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
-export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, version, onVersionChange }: SidebarProps) {
+export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, version, onVersionChange, mobileOpen = false, onMobileClose }: SidebarProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
     sections.forEach(s => { init[s.name] = true; });
@@ -32,8 +34,14 @@ export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, ve
   const total = filtered.reduce((a, s) => a + s.videos.length, 0);
   const done = filtered.reduce((a, s) => a + s.videos.filter(v => completed.has(v.id)).length, 0);
 
+  const handleSelect = (v: Video) => { onSelectVideo(v); onMobileClose?.(); };
+
   return (
-    <aside className="w-72 shrink-0 h-screen sticky top-0 flex flex-col border-r border-white/10 bg-zinc-950/80 backdrop-blur-xl">
+    <>
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-sm" onClick={onMobileClose} />
+      )}
+      <aside className={`fixed md:static inset-y-0 left-0 z-40 w-72 h-screen flex flex-col border-r border-white/10 bg-zinc-950/95 md:bg-zinc-950/80 backdrop-blur-xl transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
       <div className="p-4 border-b border-white/10">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center">
@@ -103,7 +111,7 @@ export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, ve
                   return (
                     <li key={v.id}>
                       <button
-                        onClick={() => onSelectVideo(v)}
+                        onClick={() => handleSelect(v)}
                         className={`w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-all text-left ${
                           active
                             ? "bg-indigo-500/20 text-white border border-indigo-500/30"
@@ -122,5 +130,6 @@ export function Sidebar({ sections, currentVideoId, onSelectVideo, completed, ve
         ))}
       </nav>
     </aside>
+    </>
   );
 }
